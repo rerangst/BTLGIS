@@ -54,9 +54,9 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.tvListLayer = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnShowCellInfo = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.axMap1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -176,7 +176,8 @@
             this.btnExport,
             this.btnImport,
             this.toolStripSeparator1,
-            this.btnVP});
+            this.btnVP,
+            this.btnShowCellInfo});
             this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -276,8 +277,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel3,
-            this.toolStripStatusLabel1,
-            this.toolStripStatusLabel2});
+            this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 496);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 12, 0);
@@ -298,14 +298,6 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(67, 20);
             this.toolStripStatusLabel1.Text = "Kinh độ: ";
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.toolStripStatusLabel2.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(51, 20);
-            this.toolStripStatusLabel2.Text = "Vĩ độ: ";
             // 
             // tvListLayer
             // 
@@ -332,6 +324,15 @@
             this.splitContainer1.SplitterDistance = 167;
             this.splitContainer1.TabIndex = 5;
             // 
+            // btnShowCellInfo
+            // 
+            this.btnShowCellInfo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnShowCellInfo.Image = ((System.Drawing.Image)(resources.GetObject("btnShowCellInfo.Image")));
+            this.btnShowCellInfo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnShowCellInfo.Name = "btnShowCellInfo";
+            this.btnShowCellInfo.Size = new System.Drawing.Size(24, 24);
+            this.btnShowCellInfo.Text = "Hiển thị thông tin band";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -346,7 +347,6 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.axMap1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -377,7 +377,6 @@
         private System.Windows.Forms.ToolStripButton zoom_more;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripButton btnAnotation;
         private System.Windows.Forms.ToolStripButton btnVP;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
@@ -393,6 +392,7 @@
         private System.Windows.Forms.ToolStripButton btnImport;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton btnShowCellInfo;
     }
 }
 

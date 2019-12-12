@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AxMapWinGIS;
+using System.IO;
 
 namespace MapWinGIS
 {
@@ -37,7 +38,6 @@ namespace MapWinGIS
             itemOpenTable.Click += ItemOpenTable_Click;
             MenuItem itemDel = new MenuItem("Xóa");
             itemDel.Click += ItemDel_Click;
-            //
             rightClickMenu.MenuItems.Add(itemOpenTable);
             rightClickMenu.MenuItems.Add(itemDel);
             //
@@ -46,12 +46,94 @@ namespace MapWinGIS
             tvListLayer.NodeMouseClick += TvListLayer_NodeMouseClick;
             //
             btnAnotation.Click += BtnAnotation_Click;
-            this.btnVP.Click += BtnVP_Click;
-
+            btnVP.Click += BtnVP_Click;
+            btnImport.Click += BtnImport_Click;
+            btnExport.Click += BtnExport_Click;
+            btnShowCellInfo.Click += BtnShowCellInfo_Click;
             btnExport.Enabled = false;
             btnAnotation.Checked = false;
             btnVP.Checked = false;
             //
+        }
+
+        private void BtnShowCellInfo_Click(object sender, EventArgs e)
+        {
+            if (idxLayerRaster<0)
+            {
+                return;
+            }
+            btnShowCellInfo.Checked = !btnShowCellInfo.Checked;
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            if (btnAnotation.Checked)
+            {
+                var sf = axMap1.get_Shapefile(idxLayerTmp);
+                if (sf.NumShapes > 0)
+                {
+                    SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                    sfd.FilterIndex = 0;
+                    sfd.RestoreDirectory = true;
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        StreamWriter streamWriter = new StreamWriter(sfd.FileName);
+                        for (int i = 0; i < sf.NumShapes; i++)
+                        {
+                            streamWriter.Write(i + " ");
+                            for (int j = 0; j < sf.Shape[i].numPoints; j++)
+                            {
+                                var xt = sf.Shape[i].Point[j].x.ToString();
+                                var yt = sf.Shape[i].Point[j].y.ToString();
+                                streamWriter.Write("(" + xt + ";" + yt + "), ");
+                            }
+                            streamWriter.WriteLine("");
+                        }
+                        streamWriter.Close();
+                        MessageBox.Show("Done!!");
+                    }
+                }
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            if (idxLayerTmp >= 0)
+            {
+                axMap1.RemoveLayer(idxLayerTmp);
+            }
+            OpenFileDialog sfd = new OpenFileDialog();
+            sfd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            sfd.FilterIndex = 0;
+            sfd.RestoreDirectory = true;
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                StreamReader streamWriter = new StreamReader(sfd.FileName);
+                tmpLayer = new Shapefile();
+                tmpLayer.CreateNewWithShapeID("", ShpfileType.SHP_POLYGON);
+
+                while (!streamWriter.EndOfStream)
+                {
+                    var line = streamWriter.ReadLine();
+                    var listPtn = line.Split(' ');
+                    Shape shp = new Shape();
+                    shp.Create(ShpfileType.SHP_POLYGON);
+                    for (int i = 1; i < listPtn.Length - 1; i++)
+                    {
+                        var xy = listPtn[i].Remove(listPtn[i].Length - 1).Replace('(', ' ').Replace(')', ' ').Split(';');
+                        MapWinGIS.Point ptn = new MapWinGIS.Point();
+                        ptn.Set(Convert.ToDouble(xy[0]), Convert.ToDouble(xy[1]));
+                        shp.InsertPoint(ptn, ref i);
+                    }
+                    tmpLayer.EditAddShape(shp);
+                }
+                streamWriter.Close();
+                MessageBox.Show("Done!!");
+                idxLayerTmp = axMap1.AddLayer(tmpLayer, true);
+            }            
         }
 
         private void BtnAnotation_Click(object sender, EventArgs e)
@@ -100,6 +182,7 @@ namespace MapWinGIS
             var sfTmp = axMap1.get_Shapefile((int)rightClickMenu.Tag);
             if (sfTmp==null)
             {
+                rightClickMenu.MenuItems[0].Text = "Test";
                 return;
             }
             table_properties frm_2 = new table_properties(sfTmp.Table);
@@ -131,6 +214,15 @@ namespace MapWinGIS
             // See if we got a node.
             if (node_here == null) return;
             rightClickMenu.Tag = node_here.Index;
+            if (axMap1.get_Shapefile((int)rightClickMenu.Tag)==null)
+            {
+                rightClickMenu.MenuItems[0].Text = "Chọn band render";
+            }
+            else
+            {
+                rightClickMenu.MenuItems[0].Text = "Mở bảng thuộc tính";
+
+            }
             rightClickMenu.Show(tvListLayer, new System.Drawing.Point(e.X, e.Y));
         }
 
@@ -150,93 +242,6 @@ namespace MapWinGIS
             axMap1.set_LayerVisible(e.Node.Index, e.Node.Checked);
             //axMap1.get_l e.Node.Name
         }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            //Add shapefile
-            //sf.Open(@"D:\Du_lieu\rg_tinh.shp", null);
-            //i_layer0 = axMap1.AddLayer(sf, true);
-            //axMap1.set_ShapeLayerFillColor(i_layer0, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Green)));
-            //axMap1.set_ShapeLayerLineColor(i_layer0, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow)));
-            /********/
-            ////sf_1.Open(@"D:\Du_lieu\song_ho.shp", null);
-            ////i_layer1 = axMap1.AddLayer(sf_1, true);
-            ////axMap1.set_ShapeLayerFillColor(i_layer1, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Aqua)));
-            ////axMap1.set_ShapeLayerLineColor(i_layer1, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Aqua)));
-
-            //sf_1.Open(@"D:\Du_lieu\quoc_lo.shp", null);
-            //i_layer1 = axMap1.AddLayer(sf_1, true);
-            //axMap1.set_ShapeLayerFillColor(i_layer1, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Aqua)));
-            //axMap1.set_ShapeLayerLineColor(i_layer1, Convert.ToUInt32(System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Aqua)));
-            //// Load gird
-            //MapWinGIS.Grid grid = new MapWinGIS.Grid();
-            //MapWinGIS.GdalDatasetClass gdalDatasetClass = new GdalDatasetClass();
-            //GdalRasterBandClass gdalRasterBandClass = new GdalRasterBandClass();
-            //MapWinGIS.GridHeader gh = new GridHeader();
-            //string path = @"E:\tmp\sample.tif";
-            //gdalDatasetClass.Open(path, true);
-            //////grid.Open(@"D:\Du_lieu\tl_tq.tif", GridDataType.UnknownDataType, true, GridFileType.GeoTiff, null);
-            //grid.Open(path, GridDataType.UnknownDataType, true, GridFileType.GeoTiff, null);
-            //gh = grid.Header;
-            //var scheme = grid.RetrieveOrGenerateColorScheme(tkGridSchemeRetrieval.gsrAuto, tkGridSchemeGeneration.gsgGradient, PredefinedColorScheme.SummerMountains);
-            ////var img = grid.OpenAsImage(scheme, tkGridProxyMode.gpmAuto, null);
-            //var cmd = grid.Value[140, 100];
-            //MapWinGIS.ImageClass img = new ImageClass();
-            //img.Open(path);
-            //var ada = img.Band[2];
-            ////img.SourceGridBandIndex = 0;
-            //for (int i = 1; i < img.NoBands+1; i++)
-            //{
-            //    double val=0;
-            //    var dc = img.Band[i];
-            //    var dcs= img.BandMinimum[i];
-            //    var tmpd = dc.Value[100, 100,out val];
-            //}
-            //var tmp = img.Value[100, 100];
-            //grid.OpenBand(2);
-            //var cmd1= grid.Value[140, 100];
-            //grid.OpenBand(3);
-            //var cmd2= grid.Value[140, 100];
-            //grid.OpenBand(3);
-            //var cmd3= grid.Value[140, 100];
-            //List<MapWinGIS.Grid> lsGird = new List<Grid>();
-            //for (int i = 0; i < grid.NumBands; i++)
-            //{
-            //    img.SourceGridBandIndex = i;
-            //    var rmp = img.Value[100, 100];
-            //    MapWinGIS.Grid tmpGrid = new MapWinGIS.Grid();
-            //    //tmpGrid.Open(path);
-            //    //tmpGrid.OpenBand(i);
-            //    //lsGird.Add(tmpGrid);
-            //}
-            //for (int i = 0; i < lsGird.Count; i++)
-            //{
-            //    var cm = lsGird[i].Value[100, 100];
-            //}
-            //axMap1.AddLayer(img, true);
-            //axMap1.AddLayer(gdalDatasetClass, true);
-
-            //axMap1.Redraw();
-            ////load label
-            //Point pt = new Point();
-            //string[] arrstring = new string[sf.NumShapes];
-            //for (int i = 0; i < sf.NumShapes - 1; i++)
-            //{
-            //    arrstring[i] = Convert.ToString(sf.get_CellValue(1, i));
-
-            //}
-            //for (int i = 0; i < sf.NumShapes - 1; i++)
-            //{
-
-            //    pt = sf.get_Shape(i).Extents.Center;
-            //    sf.Labels.AddLabel(arrstring[i], pt.x, pt.y, 0, 0);
-
-            //}
-            //sf.Labels.FrameVisible = false;
-            //sf.Labels.FontSize = 8;
-            //sf = axMap1.get_Shapefile(i_layer0);
-        }
-
         private void menu_open_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -294,13 +299,41 @@ namespace MapWinGIS
         //}
         private void axMap1_MouseMoveEvent(object sender, AxMapWinGIS._DMapEvents_MouseMoveEvent e)
         {
-            double x, y;
-            x = y = 0;
-            axMap1.PixelToProj(e.x, e.y, ref x, ref y);
-            x = Math.Round(x, 3);
-            y = Math.Round(y, 3);
+            if (btnShowCellInfo.Checked)
+            {
+                string stt = "";
+                int row;
+                int column;
+                double X = 0;
+                double Y = 0;
+                axMap1.PixelToProj(e.x, e.y, ref X, ref Y);
+                stt += "Kinh độ: " + Convert.ToString(Math.Round(X, 3)) +
+                        " Vĩ độ: " + Convert.ToString(Math.Round(Y, 3))  +
+                        ". Giá trị Band: ";
+                MapWinGIS.Image img = axMap1.get_Image(idxLayerRaster);
+                img.ProjectionToImage(X, Y, out column, out row);
+                double[] vals = new double[img.NoBands];
+                for (int i = 1; i <= img.NoBands; i++)
+                {
+                    GdalRasterBand rst = img.get_Band(i);
+                    double pVal;
+                    rst.get_Value(row, column, out pVal);
+                    vals[i - 1] = pVal;
+                    stt += i.ToString() +" : "+ Math.Round(pVal, 3).ToString()+ "; ";
+                }
 
-            toolStripStatusLabel1.Text = "Kinh độ: " + Convert.ToString(x) + "Vĩ độ: " + Convert.ToString(y);
+                toolStripStatusLabel1.Text = stt;
+            }
+            else
+            {
+                double x, y;
+                x = y = 0;
+                axMap1.PixelToProj(e.x, e.y, ref x, ref y);
+                x = Math.Round(x, 3);
+                y = Math.Round(y, 3);
+
+                toolStripStatusLabel1.Text = "Kinh độ: " + Convert.ToString(x) + " Vĩ độ: " + Convert.ToString(y);
+            }
         }
 
         private void zoom_in_Click(object sender, EventArgs e)
@@ -356,7 +389,7 @@ namespace MapWinGIS
                 }
                 else
                 {
-                    System.Drawing.Image img = layer as System.Drawing.Image;
+                    MapWinGIS.Image img = layer as MapWinGIS.Image;
                     if (img != null)
                     {
                         imgCount++;
@@ -449,15 +482,15 @@ namespace MapWinGIS
 
         private void rasterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Image img = new Image();
-            img.Open(@"D:\Du_lieu\tl_tq.tif", ImageType.TIFF_FILE, false, null);
-            axMap1.AddLayer(img, true);
-            axMap1.Redraw();
+            
         }
 
         private void BtnVP_Click(object sender, EventArgs e)
         {
             btnVP.Checked = !btnVP.Checked;
+            axMap1.CursorMode = tkCursorMode.cmMeasure;
+            axMap1.Measuring.MeasuringType = tkMeasuringType.MeasureDistance;
+            axMap1.Measuring.ShowLength = false;
             axMap1.MeasuringChanged += AxMap1_MeasuringChanged;           
         }
 
@@ -492,11 +525,7 @@ namespace MapWinGIS
                 }
                 if(btnVP.Checked)
                 {
-                    Shape shp = new Shape();
-                    shp.Create(ShpfileType.SHP_POLYGON);
-                    //shp_tmp.EditAddShape()
                     double x, y;
-
                     axMap1.Measuring.get_PointXY(0, out x, out y);
                     MapWinGIS.Point pt1 = new Point();
                     pt1.Set(x, y);

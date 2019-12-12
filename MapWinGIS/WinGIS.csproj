@@ -61,6 +61,12 @@
     <Compile Include="Add_form.Designer.cs">
       <DependentUpon>Add_form.cs</DependentUpon>
     </Compile>
+    <Compile Include="BandRender.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BandRender.Designer.cs">
+      <DependentUpon>BandRender.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +96,9 @@
     </Compile>
     <EmbeddedResource Include="Add_form.resx">
       <DependentUpon>Add_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BandRender.resx">
+      <DependentUpon>BandRender.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

@@ -181,9 +181,10 @@ namespace MapWinGIS
         {
             var sfTmp = axMap1.get_Shapefile((int)rightClickMenu.Tag);
             if (sfTmp==null)
-            {
-                rightClickMenu.MenuItems[0].Text = "Test";
-                return;
+            {                
+                BandRender bandRender = new BandRender(axMap1.get_Image(idxLayerRaster));
+                bandRender.SelectBand += BandRender_SelectBand;
+                bandRender.ShowDialog();
             }
             table_properties frm_2 = new table_properties(sfTmp.Table);
             frm_2.FormClosed += Frm_2_FormClosed;
@@ -194,6 +195,15 @@ namespace MapWinGIS
             frm_2.Sk_add_field += new table_properties.dltruyen_fieldtype(frm_2_Sk_add_field);
             frm_2.Sk_remove_field += new table_properties.dltruyen_fieldtype(frm_2_Sk_remove_field);
             frm_2.Show();
+        }
+
+        private void BandRender_SelectBand(int redIdx, int greenIdx, int blueIdx)
+        {
+            var imgTmp = axMap1.get_Image(idxLayerRaster);
+            imgTmp.RedBandIndex = redIdx;
+            imgTmp.GreenBandIndex =greenIdx;
+            imgTmp.BlueBandIndex = blueIdx;
+            axMap1.Redraw();
         }
 
         private void Frm_2_FormClosed(object sender, FormClosedEventArgs e)
@@ -540,6 +550,5 @@ namespace MapWinGIS
             }
 
         }
-       
     }
 }

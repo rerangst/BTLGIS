@@ -51,7 +51,7 @@
             // 
             this.btn_edit.Location = new System.Drawing.Point(633, 35);
             this.btn_edit.Name = "btn_edit";
-            this.btn_edit.Size = new System.Drawing.Size(90, 31);
+            this.btn_edit.Size = new System.Drawing.Size(98, 31);
             this.btn_edit.TabIndex = 1;
             this.btn_edit.Text = "Sua";
             this.btn_edit.UseVisualStyleBackColor = true;

@@ -32,6 +32,7 @@ namespace MapWinGIS
             axMap1.SendMouseMove = true;
             this.axMap1.MouseMoveEvent += axMap1_MouseMoveEvent;
             axMap1.CursorMode = tkCursorMode.cmPan;
+            axMap1.ShowRedrawTime = false;
             //
             //
             MenuItem itemOpenTable = new MenuItem("Mở bảng thuộc tính");
